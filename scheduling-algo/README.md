@@ -106,11 +106,9 @@ This helps in analyzing which algorithm performs better under different conditio
 
 ## 🧰 Tech Stack
 
-- **Frontend:** HTML5, CSS3, JavaScript
-- **Framework:** Bootstrap (for responsive design)
+- **Frontend:**  React + Tailwind CSS
+- **Framework:** Tailwind utilities (for responsive design)
 - **Visualization:** Custom Gantt chart logic using DOM manipulation
-
----
 
 ## 🤝 Contributing
 
@@ -138,7 +136,7 @@ If you’d like to enhance the visualization or add more algorithms, follow thes
 
 **Dipanshu Bansal**
 Student at **NIT Jalandhar** | Full Stack Developer | Tech Enthusiast  
-📧 Email: dipanshubansal.work@gmail.com  
+📧 Email: dipanshu6bansal@gmail.com  
 🌐 GitHub: [https://github.com/DIPANSHU66](https://github.com/DIPANSHU66)
 
 ---
