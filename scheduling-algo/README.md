@@ -70,7 +70,7 @@ Optimized scheduling ensures:
 
 ### Step 1: Clone the repository
 ```bash
-git clone https://github.com/DIPANSHU66/scheduling-algo..git
+git clone https://github.com/DIPANSHU66/scheduling-algo.git
 ```
 
 ### Step 2: Open project folder
