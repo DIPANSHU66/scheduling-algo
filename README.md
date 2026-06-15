@@ -1,114 +1,127 @@
-# ⚙️ Scheduling Algorithms – A Visual Approach
+# ⚙️ CPU Scheduling Simulator & Visualizer
 
-### Developed by **Dipanshu Bansal**
+### Developed by **Dipanshu Bansal**  
+*Student at NIT Jalandhar | Full Stack Developer | Tech Enthusiast*
 
-This project is an **interactive visualization tool** for understanding how different CPU scheduling algorithms work. It helps students and developers see how processes are executed, how waiting and turnaround times are calculated, and how the CPU handles multiple processes efficiently.
+An **interactive, premium visualization tool** designed to model, scrub, and analyze CPU scheduling algorithms in real-time. This project features a clean separation between scheduling logic and UI rendering, acting as an educational aid and a high-caliber addition to a technical resume.
 
----
-
-## 🧠 Overview
-
-In multitasking operating systems, **CPU scheduling** determines the order in which processes are executed.
-The main goal of scheduling is to **maximize CPU utilization**, **reduce waiting time**, and **improve system throughput**.
-
-This project visually represents each scheduling technique, showing how processes are picked and executed over time.
-It also helps to compare algorithms based on performance metrics such as waiting time, turnaround time, and response time.
+🚀 **Live Interactive Playback:** Drag the slider to scrub through time and watch CPU state changes, ready queue queues, and the Gantt chart update dynamically!
 
 ---
 
-## 🎯 Key Concepts
+## 🧠 Architectural Overview (Separation of Concerns)
 
-- **CPU Scheduling:** The method by which processes are assigned to run on the processor.
-- **Burst Time:** The time required by a process for its complete execution.
-- **Arrival Time:** The time when a process enters the ready queue.
-- **Waiting Time:** The total time a process spends waiting in the ready queue.
-- **Turnaround Time:** The total time taken from process arrival to completion.
-- **Response Time:** The time from arrival to the first CPU allocation.
+Unlike typical simulation projects that mix UI rendering and state calculation within asynchronous timers, this project is built on clean software engineering principles:
 
-Optimized scheduling ensures:
-- Better CPU performance
-- Reduced process starvation
-- Improved system responsiveness
+```mermaid
+graph LR
+    A[User Inputs Processes] --> B[Scheduler Engine]
+    B --> C{Generate Timeline}
+    C -->|Array of Snapshots| D[React UI Renderer]
+    D -->|Playhead Control t| E[Visualizer Dashboard]
+    E --> F[Gantt Chart & Metrics]
+    E --> G[Log Terminal]
+```
+
+### 1. The Core Engine (`schedulerEngine.js`)
+All scheduling algorithms are implemented as **pure JavaScript functions**. The engine takes the input process list and runs the simulation synchronously, outputting a complete `timeline` array of snapshots for every second `t`. Each snapshot records:
+* Which process is occupying the CPU.
+* The exact order of processes waiting in the `readyQueue`.
+* Remaining execution times for all jobs.
+* Completed processes up to that second.
+* Decision engine events (e.g., preemption notifications, arrivals, context switches).
+
+*Benefit:* Separating this algorithm logic from React makes it **100% testable**, **deterministic**, and **free from async race conditions**.
+
+### 2. The Interactive Visualizer (`Visualizer.jsx`)
+The UI is driven entirely by the `currentTime` playhead state. As the user scrubs the slider or presses Play:
+* The UI reads the corresponding snapshot from the timeline.
+* The Gantt chart dynamically constructs and shrinks/grows according to the current timestamp.
+* The terminal logs scroll reactively to explain scheduler choices at that exact millisecond.
 
 ---
 
 ## 🧩 Implemented Algorithms
 
-### 1. **First Come First Serve (FCFS)**
-- Non-preemptive algorithm.
-- Processes are executed in the order they arrive.
-- Simple but can cause high waiting time for long processes.
-
-### 2. **Shortest Job First (SJF)**
-- Non-preemptive algorithm.
-- The process with the smallest burst time is executed first.
-- Provides minimal average waiting time but may lead to starvation for longer jobs.
-
-### 3. **Round Robin (RR)**
-- Preemptive algorithm.
-- Each process is given a fixed time slice (quantum).
-- Ensures fairness and responsiveness in time-sharing systems.
-
-### 4. **Priority Scheduling**
-- Can be preemptive or non-preemptive.
-- Processes are executed based on priority level.
-- Higher-priority tasks get CPU first; may cause starvation for low-priority ones.
-
----
-
-## ⚡ Features
-
-- Interactive user interface built using **HTML, CSS, and JavaScript**
-- Real-time visualization of scheduling order
-- Gantt chart-style dynamic updates for process execution
-- Calculation of average waiting and turnaround times
-- Option to compare algorithms side-by-side
+1. **First Come First Serve (FCFS)**
+   * *Type:* Non-preemptive.
+   * *Logic:* Executes processes strictly in order of arrival.
+   * *Interview Talking Point:* Easy to implement, but prone to the **Convoy Effect** (short jobs wait behind a massive long job).
+2. **Shortest Job First (SJF)**
+   * *Type:* Non-preemptive.
+   * *Logic:* Picks the arrived process with the shortest burst time.
+   * *Interview Talking Point:* Mathematically optimal for minimizing average waiting time, but can cause **starvation** for long jobs.
+3. **Shortest Remaining Time First (SRTF / SRJF)**
+   * *Type:* Preemptive.
+   * *Logic:* At each tick, preempts the CPU if an arrived process has a shorter remaining burst time than the running process.
+4. **Round Robin (RR)**
+   * *Type:* Preemptive.
+   * *Logic:* Allocates CPU to ready queue jobs in FIFO order for a fixed time unit called **Time Quantum**.
+   * *Interview Talking Point:* Highly responsive for time-sharing systems. Selecting the right quantum is critical (too small = high context switch overhead; too large = behaves like FCFS).
+5. **Priority Scheduling (Non-Preemptive)**
+   * *Type:* Non-preemptive.
+   * *Logic:* Allocates CPU based on priority rank (lower integer value = higher priority).
+6. **Priority Scheduling (Preemptive)**
+   * *Type:* Preemptive.
+   * *Logic:* Preempts current execution immediately if a higher-priority process arrives.
 
 ---
 
-## 🛠 Installation and Usage
+## ⚡ Key Features
 
-### Step 1: Clone the repository
+* **Timeline Scrubbing:** A range slider that lets you scrub backwards and forwards through the entire execution timeline.
+* **Microprocessor CPU Core Visual:** A pulsing central CPU processor dashboard showing active progress bars and quantum timers.
+* **Event Logger Terminal:** A hacker-style log panel that explains the algorithmic reason behind every scheduling decision.
+* **Responsive Performance Metrics:** Real-time averages for Turnaround Time (TAT) and Waiting Time (WT), alongside detailed process statistics tables.
+* **Modern Glassmorphic Dark UI:** Designed with frosted-glass containers, vibrant process neon tags, and smooth animations powered by Tailwind CSS v4.
+
+---
+
+## 🛠 Installation & Setup
+
+Ensure you have [Node.js](https://nodejs.org/) installed.
+
+### 1. Clone the repository
 ```bash
-git clone https://github.com/DIPANSHU66/scheduling-algo..git
+git clone https://github.com/DIPANSHU66/scheduling-algo.git
 ```
 
-### Step 2: Open project folder
+### 2. Enter project folder
 ```bash
 cd scheduling-algo
 ```
 
-### Step 3: Run the project
-You can simply open the `index.html` file in your browser.
-Or, if using a local server:
+### 3. Install packages
 ```bash
 npm install
+```
+
+### 4. Start Development Server
+```bash
 npm run dev
 ```
 
-### Step 4: Use the interface
-- Enter process details (arrival time, burst time, etc.).
-- Choose a scheduling algorithm.
-- Click "Run" to see the live execution flow and Gantt chart.
-
 ---
 
-## 🧮 Performance Metrics
+## 🎓 Recruiter & Interview Cheat Sheet (Q&A)
 
-Each algorithm calculates and displays the following:
-- Average Waiting Time
-- Average Turnaround Time
-- Average Response Time
+Prepare for your OS interview questions with these quick-answers based on this simulator:
 
-This helps in analyzing which algorithm performs better under different conditions.
+**Q: What is the Convoy Effect in FCFS?**  
+*A:* When a single heavy CPU-bound process occupies the CPU, several small I/O-bound processes arrive and must wait in the ready queue. This results in poor CPU utilization and long average waiting times.
 
----
+**Q: How do you solve starvation in Priority Scheduling?**  
+*A:* Starvation (where a low-priority job waits indefinitely) is solved using **Aging**, which gradually increases the priority of processes that wait in the ready queue for long periods.
+
+**Q: Why is SRTF difficult to implement in real operating systems?**  
+*A:* Because it is extremely difficult for an OS to know the exact **future burst time** of a process. Systems must instead *estimate* burst times using historical exponential averaging.
 
 ## 🧰 Tech Stack
 
-- **Frontend:**  React + Tailwind CSS
-- **Framework:** Tailwind utilities (for responsive design)
-- **Visualization:** Custom Gantt chart logic using DOM manipulation
+- **Frontend:** React (Vite)
+- **Styling:** Tailwind CSS v4
+- **Icons:** Lucide React
+- **Visualization:** Custom simulation engine with interactive range scrubbing, dynamic Gantt charts, and scroll-locked live logs.
 
 ## 🤝 Contributing
 
@@ -134,14 +147,9 @@ If you’d like to enhance the visualization or add more algorithms, follow thes
 
 ## 👨‍💻 Author
 
-**Dipanshu Bansal**
+**Dipanshu Bansal**  
 Student at **NIT Jalandhar** | Full Stack Developer | Tech Enthusiast  
-📧 Email: dipanshu6bansal@gmail.com  
-🌐 GitHub: [https://github.com/DIPANSHU66](https://github.com/DIPANSHU66)
+📧 Email: [dipanshu6bansal@gmail.com](mailto:dipanshu6bansal@gmail.com)  
+🌐 GitHub: [github.com/DIPANSHU66](https://github.com/DIPANSHU66)
 
----
-
-## ⭐ Support
-
-If you find this project helpful, please give it a ⭐ on GitHub!
-It motivates me to build more open-
+⭐ *If this project helped you understand operating systems scheduling, please star the repository!*
