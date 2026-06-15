@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { Plus, Tag, Clock, Activity, AlertCircle } from "lucide-react";
 
 const ProcessForm = ({ processes, addProcess, algorithm }) => {
   const [process, setProcess] = useState({
@@ -8,14 +8,11 @@ const ProcessForm = ({ processes, addProcess, algorithm }) => {
     burstTime: "",
     arrivalTime: "",
     priority: "",
-    queueLevel: "",
-    timeQuantum: "",
   });
 
   const handleSubmit = (e) => {
     e.preventDefault();
   
-    // Ensure process name is unique & valid
     const trimmedName = process.name.trim();
     if (!trimmedName) {
       toast.error("Process name cannot be empty!", { position: "top-right", autoClose: 2000 });
@@ -26,36 +23,30 @@ const ProcessForm = ({ processes, addProcess, algorithm }) => {
       return;
     }
 
-    // Ensure numerical values are valid
     const burstTime = parseInt(process.burstTime);
     const arrivalTime = parseInt(process.arrivalTime);
     const priority = parseInt(process.priority);
-    const queueLevel = parseInt(process.queueLevel);
-    const timeQuantum = parseInt(process.timeQuantum);
 
     if (isNaN(burstTime) || burstTime <= 0 || isNaN(arrivalTime) || arrivalTime < 0) {
       toast.error("Please enter valid Burst Time and Arrival Time!", { position: "top-right", autoClose: 2000 });
       return;
     }
 
-    if (["Priority (Preemptive)", "Priority (Non-Preemptive)"].includes(algorithm) && (isNaN(priority) || priority < 0)) {
+    const isPriorityAlgo = ["Priority (Preemptive)", "Priority (Non-Preemptive)"].includes(algorithm);
+    if (isPriorityAlgo && (isNaN(priority) || priority < 0)) {
       toast.error("Please enter a valid Priority!", { position: "top-right", autoClose: 2000 });
       return;
     }
 
-    if (["MLQ", "MLFQ"].includes(algorithm) && (isNaN(queueLevel) || queueLevel < 1)) {
-      toast.error("Queue Level must be at least 1!", { position: "top-right", autoClose: 2000 });
-      return;
-    }
+    // Add the process with parsed values
+    addProcess({
+      name: trimmedName,
+      burstTime: burstTime.toString(),
+      arrivalTime: arrivalTime.toString(),
+      priority: isPriorityAlgo ? priority.toString() : "",
+    });
 
-    if (["RR", "MLFQ"].includes(algorithm) && (isNaN(timeQuantum) || timeQuantum <= 0)) {
-      toast.error("Time Quantum must be greater than 0!", { position: "top-right", autoClose: 2000 });
-      return;
-    }
-
-    // Add the process with trimmed name
-    addProcess({ ...process, name: trimmedName });
-    toast.success("Process added successfully!", { position: "top-right", autoClose: 1500 });
+    toast.success(`Process ${trimmedName} added!`, { position: "top-right", autoClose: 1500 });
 
     // Reset form
     setProcess({
@@ -63,88 +54,100 @@ const ProcessForm = ({ processes, addProcess, algorithm }) => {
       burstTime: "",
       arrivalTime: "",
       priority: "",
-      queueLevel: "",
-      timeQuantum: "",
     });
   };
 
+  const isPriorityAlgo = ["Priority (Preemptive)", "Priority (Non-Preemptive)"].includes(algorithm);
+
   return (
-    <form onSubmit={handleSubmit} className="p-6 mb-10 border border-white rounded-lg shadow-md transition-all bg-black text-white">
-      <h2 className="text-2xl font-semibold mb-4 text-center">Add a Process</h2>
-
-      <div className="flex flex-col gap-4 justify-center">
-        {/* Process Name */}
-        <input
-          type="text"
-          placeholder="Enter Process Name"
-          value={process.name}
-          onChange={(e) => setProcess({ ...process, name: e.target.value })}
-          className="border p-3 rounded bg-black text-white w-full mt-1"
-        />
-
-        {/* Burst Time */}
-        <input
-          type="number"
-          placeholder="Enter Burst Time"
-          min="1"
-          value={process.burstTime}
-          onChange={(e) => setProcess({ ...process, burstTime: e.target.value })}
-          className="border p-3 rounded bg-black text-white w-full mt-1"
-        />
-
-        {/* Arrival Time */}
-        <input
-          type="number"
-          placeholder="Enter Arrival Time"
-          min="0"
-          value={process.arrivalTime}
-          onChange={(e) => setProcess({ ...process, arrivalTime: e.target.value })}
-          className="border p-3 rounded bg-black text-white w-full mt-1"
-        />
-
-        {/* Priority (For Priority Scheduling) */}
-        {["Priority (Preemptive)", "Priority (Non-Preemptive)"].includes(algorithm) && (
-          <input
-            type="number"
-            placeholder="Enter Priority"
-            min="0"
-            value={process.priority}
-            onChange={(e) => setProcess({ ...process, priority: e.target.value })}
-            className="border p-3 rounded bg-black text-white w-full mt-1"
-          />
-        )}
-
-        {/* Queue Level (For MLQ & MLFQ) */}
-        {/* {["MLQ", "MLFQ"].includes(algorithm) && (
-          <input
-            type="number"
-            placeholder="Enter Queue Level"
-            min="1"
-            value={process.queueLevel}
-            onChange={(e) => setProcess({ ...process, queueLevel: e.target.value })}
-            className="border p-3 rounded bg-black text-white w-full mt-1"
-          />
-        )} */}
-
-        {/* Time Quantum (For RR & MLFQ) */}
-        {/* {["RR", "MLFQ"].includes(algorithm) && (
-          <input
-            type="number"
-            placeholder="Enter Time Quantum"
-            min="1"
-            value={process.timeQuantum}
-            onChange={(e) => setProcess({ ...process, timeQuantum: e.target.value })}
-            className="border p-3 rounded bg-black text-white w-full mt-1"
-          />
-        )} */}
+    <form 
+      onSubmit={handleSubmit} 
+      className="p-6 border border-slate-200 dark:border-zinc-800 bg-white/60 dark:bg-zinc-900/30 backdrop-blur-md rounded-2xl shadow-md dark:shadow-xl space-y-5 relative overflow-hidden"
+    >
+      <div className="absolute top-0 left-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-2xl -z-10"></div>
+      
+      <div className="flex items-center gap-2.5 pb-3 border-b border-slate-200 dark:border-zinc-800">
+        <Plus className="w-5 h-5 text-indigo-500 dark:text-indigo-400" />
+        <h2 className="text-lg font-bold text-slate-800 dark:text-white">Create Process</h2>
       </div>
 
-      {/* Submit Button */}
+      <div className="space-y-4">
+        {/* Process Name */}
+        <div className="space-y-1.5">
+          <label className="text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
+            <Tag className="w-3.5 h-3.5 text-indigo-550 dark:text-indigo-400" />
+            Process Label
+          </label>
+          <input
+            type="text"
+            placeholder="e.g. P1, P2, JobA"
+            value={process.name}
+            onChange={(e) => setProcess({ ...process, name: e.target.value })}
+            className="w-full border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-950/60 rounded-xl py-2.5 px-3.5 text-sm text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+            maxLength={10}
+          />
+        </div>
+
+        {/* Burst Time */}
+        <div className="space-y-1.5">
+          <label className="text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
+            <Activity className="w-3.5 h-3.5 text-indigo-550 dark:text-indigo-400" />
+            Burst Time (CPU cycles)
+          </label>
+          <input
+            type="number"
+            placeholder="Execution duration (e.g. 5)"
+            min="1"
+            value={process.burstTime}
+            onChange={(e) => setProcess({ ...process, burstTime: e.target.value })}
+            className="w-full border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-950/60 rounded-xl py-2.5 px-3.5 text-sm text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+          />
+        </div>
+
+        {/* Arrival Time */}
+        <div className="space-y-1.5">
+          <label className="text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
+            <Clock className="w-3.5 h-3.5 text-indigo-550 dark:text-indigo-400" />
+            Arrival Time (seconds)
+          </label>
+          <input
+            type="number"
+            placeholder="Ready queue arrival (e.g. 0)"
+            min="0"
+            value={process.arrivalTime}
+            onChange={(e) => setProcess({ ...process, arrivalTime: e.target.value })}
+            className="w-full border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-950/60 rounded-xl py-2.5 px-3.5 text-sm text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+          />
+        </div>
+
+        {/* Priority */}
+        {isPriorityAlgo && (
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
+                <AlertCircle className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />
+                Priority Rank
+              </label>
+              <span className="text-[10px] text-slate-400 dark:text-zinc-500 italic">Lower = Higher priority</span>
+            </div>
+            <input
+              type="number"
+              placeholder="e.g. 1 (High), 5 (Low)"
+              min="0"
+              value={process.priority}
+              onChange={(e) => setProcess({ ...process, priority: e.target.value })}
+              className="w-full border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-950/60 rounded-xl py-2.5 px-3.5 text-sm text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+            />
+          </div>
+        )}
+      </div>
+
       <button
         type="submit"
-        className="mt-4 p-3 bg-black text-white rounded hover:bg-white hover:text-black transition-all flex items-center gap-2 mx-auto border border-white"
+        className="w-full mt-2 py-3 bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 transition-all font-semibold shadow-lg shadow-indigo-500/10 text-white rounded-xl flex items-center justify-center gap-2 active:scale-98"
       >
-        Add Process
+        <Plus className="w-4 h-4" />
+        <span>Add Process</span>
       </button>
     </form>
   );

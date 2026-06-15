@@ -8,11 +8,11 @@ function App() {
     document.title = "CPU Scheduler";
   }, []);
   return (
-    <div className="bg-black">
-        <div className="m-auto p-6 bg-black">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300">
+      <div className="m-auto p-6">
         <Scheduler />
-        </div>
-        <GitHubFooter />
+      </div>
+      <GitHubFooter />
     </div>
   );
 }

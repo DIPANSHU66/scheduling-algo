@@ -1,2 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
 @import "tailwindcss";
+
+/* Enable selector-based (.dark class on html element) dark mode in Tailwind CSS v4 */
+@variant dark (&:where(.dark, .dark *));
