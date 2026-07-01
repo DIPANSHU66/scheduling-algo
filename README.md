@@ -1,11 +1,17 @@
 # ⚙️ CPU Scheduling Simulator & Visualizer
 
-### Developed by **Dipanshu Bansal**  
-*Student at NIT Jalandhar | Full Stack Developer | Tech Enthusiast*
+[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=Vite&logoColor=white)](https://vite.dev/)
+[![Tailwind CSS v4](https://img.shields.io/badge/Tailwind_CSS_v4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Lucide Icons](https://img.shields.io/badge/Lucide_Icons-FF6F61?style=for-the-badge&logo=lucide&logoColor=white)](https://lucide.dev/)
 
-An **interactive, premium visualization tool** designed to model, scrub, and analyze CPU scheduling algorithms in real-time. This project features a clean separation between scheduling logic and UI rendering, acting as an educational aid and a high-caliber addition to a technical resume.
+An interactive, premium visualization dashboard designed to simulate, scrub, and analyze operating system CPU scheduling algorithms in real-time. Built with a clean separation between algorithmic execution and stateful rendering.
 
-🚀 **Live Interactive Playback:** Drag the slider to scrub through time and watch CPU state changes, ready queue queues, and the Gantt chart update dynamically!
+---
+
+## 🖥️ Application Preview
+
+![CPU Scheduler Visualizer Preview](screenshots/mockup.png)
 
 ---
 
@@ -25,131 +31,96 @@ graph LR
 
 ### 1. The Core Engine (`schedulerEngine.js`)
 All scheduling algorithms are implemented as **pure JavaScript functions**. The engine takes the input process list and runs the simulation synchronously, outputting a complete `timeline` array of snapshots for every second `t`. Each snapshot records:
-* Which process is occupying the CPU.
-* The exact order of processes waiting in the `readyQueue`.
-* Remaining execution times for all jobs.
-* Completed processes up to that second.
-* Decision engine events (e.g., preemption notifications, arrivals, context switches).
+- Which process is occupying the CPU.
+- The exact order of processes waiting in the `readyQueue`.
+- Remaining execution times for all jobs.
+- Completed processes up to that second.
+- Decision engine events (e.g., preemption notifications, arrivals, context switches).
 
 *Benefit:* Separating this algorithm logic from React makes it **100% testable**, **deterministic**, and **free from async race conditions**.
 
 ### 2. The Interactive Visualizer (`Visualizer.jsx`)
 The UI is driven entirely by the `currentTime` playhead state. As the user scrubs the slider or presses Play:
-* The UI reads the corresponding snapshot from the timeline.
-* The Gantt chart dynamically constructs and shrinks/grows according to the current timestamp.
-* The terminal logs scroll reactively to explain scheduler choices at that exact millisecond.
+- The UI reads the corresponding snapshot from the timeline.
+- The Gantt chart dynamically constructs and adjusts according to the current timestamp.
+- The terminal logs scroll reactively to explain scheduler choices at that exact millisecond.
 
 ---
 
 ## 🧩 Implemented Algorithms
 
 1. **First Come First Serve (FCFS)**
-   * *Type:* Non-preemptive.
-   * *Logic:* Executes processes strictly in order of arrival.
-   * *Interview Talking Point:* Easy to implement, but prone to the **Convoy Effect** (short jobs wait behind a massive long job).
+   - *Type:* Non-preemptive.
+   - *Logic:* Executes processes strictly in order of arrival.
+   - *Interview Highlight:* Simple to design, but susceptible to the **Convoy Effect** (short jobs blocked behind long-running processes).
 2. **Shortest Job First (SJF)**
-   * *Type:* Non-preemptive.
-   * *Logic:* Picks the arrived process with the shortest burst time.
-   * *Interview Talking Point:* Mathematically optimal for minimizing average waiting time, but can cause **starvation** for long jobs.
+   - *Type:* Non-preemptive.
+   - *Logic:* Selects the arrived process with the shortest burst time.
+   - *Interview Highlight:* Minimizes average waiting time but can cause **starvation** for processes with large burst times.
 3. **Shortest Remaining Time First (SRTF / SRJF)**
-   * *Type:* Preemptive.
-   * *Logic:* At each tick, preempts the CPU if an arrived process has a shorter remaining burst time than the running process.
+   - *Type:* Preemptive.
+   - *Logic:* Preempts the CPU if a newly arrived process has a shorter remaining burst time than the current executing job.
 4. **Round Robin (RR)**
-   * *Type:* Preemptive.
-   * *Logic:* Allocates CPU to ready queue jobs in FIFO order for a fixed time unit called **Time Quantum**.
-   * *Interview Talking Point:* Highly responsive for time-sharing systems. Selecting the right quantum is critical (too small = high context switch overhead; too large = behaves like FCFS).
-5. **Priority Scheduling (Non-Preemptive)**
-   * *Type:* Non-preemptive.
-   * *Logic:* Allocates CPU based on priority rank (lower integer value = higher priority).
-6. **Priority Scheduling (Preemptive)**
-   * *Type:* Preemptive.
-   * *Logic:* Preempts current execution immediately if a higher-priority process arrives.
+   - *Type:* Preemptive.
+   - *Logic:* Cycles CPU allocation in FIFO order for a fixed unit called the **Time Quantum**.
+   - *Interview Highlight:* Essential for time-sharing systems. The quantum selection is critical (too small causes high context-switch overhead; too large converts it to FCFS).
+5. **Priority Scheduling (Preemptive & Non-Preemptive)**
+   - *Type:* Preemptive / Non-preemptive.
+   - *Logic:* Allocates CPU based on priority levels (lower values = higher priority).
 
 ---
 
 ## ⚡ Key Features
 
-* **Timeline Scrubbing:** A range slider that lets you scrub backwards and forwards through the entire execution timeline.
-* **Microprocessor CPU Core Visual:** A pulsing central CPU processor dashboard showing active progress bars and quantum timers.
-* **Event Logger Terminal:** A hacker-style log panel that explains the algorithmic reason behind every scheduling decision.
-* **Responsive Performance Metrics:** Real-time averages for Turnaround Time (TAT) and Waiting Time (WT), alongside detailed process statistics tables.
-* **Modern Glassmorphic Dark UI:** Designed with frosted-glass containers, vibrant process neon tags, and smooth animations powered by Tailwind CSS v4.
+- **Timeline Scrubbing:** Slide backwards and forwards in time to scrub execution state dynamically.
+- **Pulsing CPU Core Visual:** Dashboard showing active core indicators, progress bars, and active quantum timers.
+- **Decision Log Terminal:** A styled logs console detailing the scheduler's algorithmic choices at each event.
+- **Performance Analysis Metrics:** Real-time calculation of Turnaround Time (TAT), Waiting Time (WT), and averages.
+- **Glassmorphic UI Design:** Designed with translucent frosted containers, neon tag indicators, and animated layouts using Tailwind CSS v4.
 
 ---
 
-## 🛠 Installation & Setup
+## 🚀 Local Installation & Setup
 
-Ensure you have [Node.js](https://nodejs.org/) installed.
+### Prerequisites
+- [Node.js](https://nodejs.org/) installed
 
-### 1. Clone the repository
-```bash
-git clone https://github.com/DIPANSHU66/scheduling-algo.git
-```
-
-### 2. Enter project folder
-```bash
-cd scheduling-algo
-```
-
-### 3. Install packages
-```bash
-npm install
-```
-
-### 4. Start Development Server
-```bash
-npm run dev
-```
+### Step-by-Step Setup
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/DIPANSHU66/scheduling-algo.git
+   ```
+2. Navigate to the project root directory:
+   ```bash
+   cd scheduling-algo
+   ```
+3. Install dependencies:
+   ```bash
+   npm install
+   ```
+4. Start the local development server:
+   ```bash
+   npm run dev
+   ```
 
 ---
 
 ## 🎓 Recruiter & Interview Cheat Sheet (Q&A)
 
-Prepare for your OS interview questions with these quick-answers based on this simulator:
+Prepare for OS interview questions using this simulator as reference:
 
-**Q: What is the Convoy Effect in FCFS?**  
-*A:* When a single heavy CPU-bound process occupies the CPU, several small I/O-bound processes arrive and must wait in the ready queue. This results in poor CPU utilization and long average waiting times.
-
-**Q: How do you solve starvation in Priority Scheduling?**  
-*A:* Starvation (where a low-priority job waits indefinitely) is solved using **Aging**, which gradually increases the priority of processes that wait in the ready queue for long periods.
-
-**Q: Why is SRTF difficult to implement in real operating systems?**  
-*A:* Because it is extremely difficult for an OS to know the exact **future burst time** of a process. Systems must instead *estimate* burst times using historical exponential averaging.
-
-## 🧰 Tech Stack
-
-- **Frontend:** React (Vite)
-- **Styling:** Tailwind CSS v4
-- **Icons:** Lucide React
-- **Visualization:** Custom simulation engine with interactive range scrubbing, dynamic Gantt charts, and scroll-locked live logs.
-
-## 🤝 Contributing
-
-Contributions are welcome!
-If you’d like to enhance the visualization or add more algorithms, follow these steps:
-
-1. **Fork** the repository
-2. **Create a new branch**
-   ```bash
-   git checkout -b feature-name
-   ```
-3. **Make your changes** and commit them
-   ```bash
-   git commit -m "Added advanced scheduling animation"
-   ```
-4. **Push the branch**
-   ```bash
-   git push origin feature-name
-   ```
-5. **Create a pull request**
+- **Q: What is the Convoy Effect in FCFS?**  
+  *A:* When a heavy CPU-bound process runs, small I/O-bound processes must wait in the ready queue. This leads to poor CPU resource utilization and long waiting times.
+- **Q: How do you solve starvation in Priority Scheduling?**  
+  *A:* Starvation (where a low-priority job waits indefinitely) is solved using **Aging**, which incrementally raises the priority of waiting processes over time.
+- **Q: Why is SRTF difficult to implement in real operating systems?**  
+  *A:* An OS cannot perfectly predict **future burst times**. Systems must estimate burst times using historical exponential averaging models.
 
 ---
 
-## 👨‍💻 Author
+## 🛡️ License & Contributions
+This project is open-source. Contributions, issues, and feature requests are welcome!
 
-**Dipanshu Bansal**  
-Student at **NIT Jalandhar** | Full Stack Developer | Tech Enthusiast  
-📧 Email: [dipanshu6bansal@gmail.com](mailto:dipanshu6bansal@gmail.com)  
-🌐 GitHub: [github.com/DIPANSHU66](https://github.com/DIPANSHU66)
+---
 
-⭐ *If this project helped you understand operating systems scheduling, please star the repository!*
+*Made with ❤️ by [Dipanshu Bansal](https://github.com/DIPANSHU66)*
